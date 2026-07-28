@@ -69,14 +69,9 @@ function init_schema(PDO $pdo): void
         )
     ");
 
-    // Seed akun admin default jika tabel users masih kosong
-    $count = (int) $pdo->query('SELECT COUNT(*) AS c FROM users')->fetch()['c'];
-    if ($count === 0) {
-        $stmt = $pdo->prepare('INSERT INTO users (username, password_hash, role) VALUES (:u, :p, :r)');
-        $stmt->execute([
-            ':u' => 'admin',
-            ':p' => password_hash('admin123', PASSWORD_DEFAULT),
-            ':r' => 'admin',
-        ]);
-    }
+    // Catatan: tidak ada lagi akun admin default (admin/admin123) yang di-seed
+    // otomatis di sini. Saat tabel users masih kosong (instalasi baru), aplikasi
+    // akan mengarahkan pengguna ke setup.php untuk membuat akun admin pertama
+    // dengan username & password pilihan sendiri. Lihat has_any_user() di
+    // includes/functions.php.
 }

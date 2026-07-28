@@ -124,6 +124,22 @@ function favicon_for(string $url): string
 }
 
 /**
+ * ==== Guard instalasi awal ====
+ * Jika tabel users masih kosong (instalasi baru), paksa pengguna ke
+ * setup.php untuk membuat akun admin pertama dengan username & password
+ * pilihan sendiri — bukan kredensial default yang sama di setiap instalasi.
+ */
+function has_any_user(): bool
+{
+    return (int) db()->query('SELECT COUNT(*) AS c FROM users')->fetch()['c'] > 0;
+}
+
+$__tautan_current_script = basename($_SERVER['SCRIPT_NAME'] ?? $_SERVER['PHP_SELF'] ?? '');
+if ($__tautan_current_script !== 'setup.php' && !has_any_user()) {
+    redirect('setup.php');
+}
+
+/**
  * ==== Fungsi terkait users (khusus admin) ====
  */
 function get_users(): array
@@ -191,4 +207,130 @@ function delete_user(int $id): void
     // Link milik user ini tetap ada, hanya user_id di-set NULL (lihat FK ON DELETE SET NULL)
     $stmt = db()->prepare('DELETE FROM users WHERE id = :id');
     $stmt->execute([':id' => $id]);
+}
+
+/**
+ * ==== Halaman Pengaturan (khusus admin) ====
+ * Sub-navigasi (tab) yang dipakai bersama oleh settings.php, admin_users.php
+ * dan admin_backup.php supaya terasa sebagai satu halaman "Pengaturan".
+ */
+function render_settings_tabs(string $active): void
+{
+    $tabs = [
+        'ringkasan' => ['settings.php', '🏠 Ringkasan'],
+        'users'     => ['admin_users.php', '👤 Kelola User'],
+        'backup'    => ['admin_backup.php', '💾 Backup / Restore'],
+    ];
+    echo '<nav class="tabs">';
+    foreach ($tabs as $key => [$href, $label]) {
+        $cls = $key === $active ? 'tab tab-active' : 'tab';
+        echo '<a href="' . e($href) . '" class="' . $cls . '">' . e($label) . '</a>';
+    }
+    echo '</nav>';
+}
+
+/**
+ * ==== Backup & Restore Database (khusus admin) ====
+ */
+
+/**
+ * Nama file unduhan backup, contoh: tautan-backup-20260728-153000.sqlite
+ */
+function backup_db_filename(): string
+{
+    return 'tautan-backup-' . date('Ymd-His') . '.sqlite';
+}
+
+/**
+ * Buat snapshot database yang konsisten (pakai VACUUM INTO) lalu kirim
+ * langsung ke browser sebagai file unduhan. Fungsi ini menghentikan
+ * eksekusi (exit) setelah selesai mengirim file.
+ */
+function stream_db_backup(): void
+{
+    $tmpPath = DB_DIR . '/tmp-backup-' . bin2hex(random_bytes(8)) . '.sqlite';
+
+    try {
+        // VACUUM INTO menghasilkan salinan database yang rapi & konsisten
+        // tanpa mengganggu koneksi yang sedang berjalan.
+        db()->exec('VACUUM INTO ' . db()->quote($tmpPath));
+    } catch (Throwable $e) {
+        http_response_code(500);
+        die('Gagal membuat backup database: ' . e($e->getMessage()));
+    }
+
+    $filename = backup_db_filename();
+
+    while (ob_get_level() > 0) {
+        ob_end_clean();
+    }
+
+    header('Content-Type: application/octet-stream');
+    header('Content-Disposition: attachment; filename="' . $filename . '"');
+    header('Content-Length: ' . filesize($tmpPath));
+    header('X-Content-Type-Options: nosniff');
+    header('Cache-Control: no-store');
+    readfile($tmpPath);
+    unlink($tmpPath);
+    exit;
+}
+
+/**
+ * Cek apakah sebuah file benar-benar file database SQLite (cek magic header).
+ */
+function is_sqlite_file(string $path): bool
+{
+    $fh = @fopen($path, 'rb');
+    if (!$fh) {
+        return false;
+    }
+    $header = fread($fh, 16);
+    fclose($fh);
+    return $header === "SQLite format 3\000";
+}
+
+/**
+ * Cek apakah file SQLite punya struktur tabel yang sesuai dengan aplikasi ini
+ * (minimal ada tabel users & links), supaya tidak sembarang file diterima.
+ */
+function validate_sqlite_schema(string $path): bool
+{
+    try {
+        $pdo = new PDO('sqlite:' . $path);
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $tables = $pdo->query("SELECT name FROM sqlite_master WHERE type='table'")->fetchAll(PDO::FETCH_COLUMN);
+        return in_array('users', $tables, true) && in_array('links', $tables, true);
+    } catch (Throwable $e) {
+        return false;
+    }
+}
+
+/**
+ * Pulihkan database dari file yang diunggah.
+ * - Salinan database saat ini otomatis disimpan dulu ke data/backups/ (jaga-jaga).
+ * - File baru ditimpa lewat rename() (atomik) supaya koneksi yang sedang
+ *   berjalan pada request ini tidak ikut rusak/korup.
+ */
+function restore_db_from_upload(string $uploadedTmpPath): void
+{
+    $backupDir = DB_DIR . '/backups';
+    if (!is_dir($backupDir)) {
+        mkdir($backupDir, 0775, true);
+    }
+
+    // Simpan salinan pengaman dari database yang sedang aktif sebelum ditimpa
+    if (is_file(DB_PATH)) {
+        $safetyCopy = $backupDir . '/before-restore-' . date('Ymd-His') . '.sqlite';
+        copy(DB_PATH, $safetyCopy);
+    }
+
+    $stagingPath = DB_PATH . '.new';
+    if (!copy($uploadedTmpPath, $stagingPath)) {
+        throw new RuntimeException('Gagal menyalin file yang diunggah.');
+    }
+
+    if (!rename($stagingPath, DB_PATH)) {
+        @unlink($stagingPath);
+        throw new RuntimeException('Gagal mengganti file database.');
+    }
 }

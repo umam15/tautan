@@ -1,0 +1,13 @@
+services:
+  tautan:
+    build: .
+    container_name: tautan
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    volumes:
+      # Simpan database SQLite di luar container agar tidak hilang saat rebuild
+      - tautan_data:/var/www/html/data
+
+volumes:
+  tautan_data:

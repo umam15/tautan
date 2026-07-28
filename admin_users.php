@@ -10,7 +10,13 @@ require_once __DIR__ . '/includes/header.php';
 ?>
 
 <div class="page-head">
-    <h1>Kelola User</h1>
+    <h1>⚙️ Pengaturan</h1>
+</div>
+
+<?php render_settings_tabs('users'); ?>
+
+<div class="page-head">
+    <h2 style="margin:0;">Kelola User</h2>
     <a href="admin_user_form.php" class="btn btn-primary">+ Tambah User</a>
 </div>
 
