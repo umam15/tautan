@@ -1,12 +1,15 @@
 services:
   tautan:
     build: .
+    image: tautan:latest
     container_name: tautan
     restart: unless-stopped
     ports:
+      # Ubah "8080" di kiri kalau port tersebut sudah dipakai di mesin Anda
       - "8080:80"
     volumes:
-      # Simpan database SQLite di luar container agar tidak hilang saat rebuild
+      # Data (database SQLite & backup) disimpan di volume terpisah supaya
+      # tetap ada walau container dihapus/dibuat ulang (docker compose down).
       - tautan_data:/var/www/html/data
 
 volumes:

@@ -17,17 +17,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $passwordConfirm     = (string) ($_POST['password_confirm'] ?? '');
 
     if ($values['username'] === '') {
-        $errors[] = 'Username wajib diisi.';
+        $errors[] = t('setup_error_username_req');
     } elseif (!preg_match('/^[a-zA-Z0-9_.\-]{3,32}$/', $values['username'])) {
-        $errors[] = 'Username hanya boleh huruf, angka, titik, garis bawah/strip (3-32 karakter).';
+        $errors[] = t('setup_error_username_format');
     }
 
     if ($password === '') {
-        $errors[] = 'Password wajib diisi.';
+        $errors[] = t('setup_error_password_req');
     } elseif (strlen($password) < 6) {
-        $errors[] = 'Password minimal 6 karakter.';
+        $errors[] = t('setup_error_password_length');
     } elseif ($password !== $passwordConfirm) {
-        $errors[] = 'Konfirmasi password tidak sama dengan password.';
+        $errors[] = t('setup_error_password_match');
     }
 
     // Jaga-jaga terhadap kondisi balapan (mis. dua tab dibuka bersamaan saat instalasi)
@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($errors)) {
         create_user($values['username'], $password, 'admin');
         attempt_login($values['username'], $password);
-        set_flash('success', 'Akun admin berhasil dibuat. Selamat datang di ' . APP_NAME . '!');
+        set_flash('success', t('setup_success', [':app' => APP_NAME]));
         redirect('index.php');
     }
 }
@@ -47,10 +47,9 @@ require_once __DIR__ . '/includes/header.php';
 ?>
 
 <div class="auth-box">
-    <h1>🚀 Setup Awal</h1>
+    <h1><?= e(t('setup_title')) ?></h1>
     <p class="field-hint" style="margin-bottom:16px;">
-        Ini pertama kalinya <?= e(APP_NAME) ?> dijalankan &mdash; belum ada akun sama sekali.
-        Buat akun <strong>admin</strong> pertama untuk mulai mengelola tautan &amp; user lain.
+        <?= t('setup_intro', [':app' => e(APP_NAME)]) ?>
     </p>
 
     <?php foreach ($errors as $err): ?>
@@ -60,19 +59,19 @@ require_once __DIR__ . '/includes/header.php';
     <form method="post" action="setup.php" class="form">
         <?= csrf_field() ?>
         <label>
-            Username Admin
+            <?= e(t('setup_username_label')) ?>
             <input type="text" name="username" required autofocus minlength="3" maxlength="32"
                    pattern="[a-zA-Z0-9_.\-]{3,32}" value="<?= e($values['username']) ?>">
         </label>
         <label>
-            Password
+            <?= e(t('setup_password_label')) ?>
             <input type="password" name="password" required minlength="6">
         </label>
         <label>
-            Konfirmasi Password
+            <?= e(t('setup_password_confirm_label')) ?>
             <input type="password" name="password_confirm" required minlength="6">
         </label>
-        <button type="submit" class="btn btn-primary btn-block">Buat Akun Admin &amp; Mulai</button>
+        <button type="submit" class="btn btn-primary btn-block"><?= t('setup_submit') ?></button>
     </form>
 </div>
 

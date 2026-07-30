@@ -2,36 +2,107 @@
 require_once __DIR__ . '/functions.php';
 $__user = current_user();
 $__flashes = get_flashes();
+$__scriptDir = basename(dirname($_SERVER['SCRIPT_NAME'] ?? $_SERVER['PHP_SELF'] ?? ''));
 $__is_setup_page = basename($_SERVER['SCRIPT_NAME'] ?? '') === 'setup.php';
+$__base = base_path();
+$__settingsHref = $__scriptDir === 'admin' ? 'settings.php' : $__base . 'admin/settings.php';
+$__currentUrl = $_SERVER['REQUEST_URI'] ?? ($__base . 'index.php');
+$__otherLang = current_lang() === 'id' ? 'en' : 'id';
 ?>
 <!DOCTYPE html>
-<html lang="id">
+<html lang="<?= e(current_lang()) ?>">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title><?= e(APP_NAME) ?></title>
-<link rel="stylesheet" href="assets/style.css">
+
+<!-- Set tema (terang/gelap) sebelum CSS dirender, supaya tidak ada "kedip"
+     ke tema default saat memuat halaman untuk user yang sudah memilih tema
+     terang lewat tombol di topbar (disimpan di localStorage). -->
+<script>
+(function () {
+    try {
+        var t = localStorage.getItem('tautan-theme');
+        if (t === 'light') {
+            document.documentElement.setAttribute('data-theme', 'light');
+        }
+    } catch (e) {}
+})();
+</script>
+
+<link rel="stylesheet" href="<?= e($__base) ?>assets/style.css">
+
+<!-- PWA: bisa di-"Install app" lewat browser (Chrome/Edge/Safari/dsb) -->
+<link rel="manifest" href="<?= e($__base) ?>manifest.json">
+<meta name="theme-color" content="#0f1220" id="meta-theme-color">
+<link rel="icon" href="<?= e($__base) ?>assets/icons/icon-32.png" sizes="32x32">
+<link rel="icon" href="<?= e($__base) ?>assets/icons/icon-192.png" sizes="192x192">
+<link rel="apple-touch-icon" href="<?= e($__base) ?>assets/icons/icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="<?= e(APP_NAME) ?>">
 </head>
 <body>
+<script>
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () {
+        navigator.serviceWorker.register('<?= e($__base) ?>sw.js');
+    });
+}
+</script>
 <header class="topbar">
     <div class="topbar-inner">
-        <a href="index.php" class="brand">🔗 <?= e(APP_NAME) ?></a>
-        <?php if (!$__is_setup_page): ?>
-        <nav class="nav">
-            <?php if ($__user): ?>
-                <span class="nav-user">Halo, <strong><?= e($__user['username']) ?></strong> <span class="badge badge-<?= e($__user['role']) ?>"><?= e($__user['role']) ?></span></span>
-                <?php if ($__user['role'] === 'admin'): ?>
-                    <a href="settings.php">⚙️ Pengaturan</a>
+        <a href="<?= e($__base) ?>index.php" class="brand">🔗 <?= e(APP_NAME) ?></a>
+        <div class="topbar-right">
+            <a class="lang-toggle" title="<?= e(t('lang_switch_label')) ?>"
+               href="<?= e($__base) ?>switch_lang.php?lang=<?= e($__otherLang) ?>&amp;redirect=<?= urlencode($__currentUrl) ?>">
+                <?= $__otherLang === 'en' ? '🌐 EN' : '🌐 ID' ?>
+            </a>
+            <button type="button" id="theme-toggle" class="theme-toggle" aria-label="<?= e(t('theme_toggle_label')) ?>" title="<?= e(t('theme_toggle_label')) ?>">🌙</button>
+            <?php if (!$__is_setup_page): ?>
+            <nav class="nav">
+                <?php if ($__user): ?>
+                    <span class="nav-user"><?= e(t('nav_hello')) ?> <strong><?= e($__user['username']) ?></strong> <span class="badge badge-<?= e($__user['role']) ?>"><?= e($__user['role']) ?></span></span>
+                    <?php if ($__user['role'] === 'admin'): ?>
+                        <a href="<?= e($__settingsHref) ?>"><?= e(t('nav_settings')) ?></a>
+                    <?php endif; ?>
+                    <a href="<?= e($__base) ?>logout.php" onclick="return confirm('<?= e(t('nav_logout_confirm')) ?>');"><?= e(t('nav_logout')) ?></a>
+                <?php else: ?>
+                    <a href="<?= e($__base) ?>login.php"><?= e(t('nav_login')) ?></a>
                 <?php endif; ?>
-                <a href="logout.php" onclick="return confirm('Keluar dari akun?');">Logout</a>
-            <?php else: ?>
-                <a href="login.php">Login</a>
+            </nav>
             <?php endif; ?>
-        </nav>
-        <?php endif; ?>
+        </div>
     </div>
 </header>
+<script>
+(function () {
+    var btn = document.getElementById('theme-toggle');
+    var metaColor = document.getElementById('meta-theme-color');
+    var COLORS = { dark: '#0f1220', light: '#f4f5fb' };
+
+    function current() {
+        return document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+    }
+    function applyIcon() {
+        var isLight = current() === 'light';
+        btn.textContent = isLight ? '☀️' : '🌙';
+        btn.setAttribute('aria-pressed', isLight ? 'true' : 'false');
+        if (metaColor) {
+            metaColor.setAttribute('content', COLORS[current()]);
+        }
+    }
+
+    applyIcon();
+    btn.addEventListener('click', function () {
+        var next = current() === 'light' ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', next);
+        try { localStorage.setItem('tautan-theme', next); } catch (e) {}
+        applyIcon();
+    });
+})();
+</script>
 <main class="container">
     <?php foreach ($__flashes as $f): ?>
         <div class="flash flash-<?= e($f['type']) ?>"><?= e($f['message']) ?></div>
     <?php endforeach; ?>
+

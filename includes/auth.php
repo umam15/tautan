@@ -4,6 +4,7 @@
  */
 
 require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/lang.php';
 
 function current_user(): ?array
 {
@@ -37,18 +38,29 @@ function is_admin(): bool
     return $u !== null && $u['role'] === 'admin';
 }
 
+/**
+ * Prefix relatif ke root aplikasi ('' di root, '../' di dalam admin/ atau links/).
+ * Dipakai supaya redirect() & link antar halaman tetap benar walau halaman
+ * berada satu tingkat di dalam subfolder.
+ */
+function base_path(): string
+{
+    $dir = basename(dirname($_SERVER['SCRIPT_NAME'] ?? $_SERVER['PHP_SELF'] ?? ''));
+    return in_array($dir, ['admin', 'links'], true) ? '../' : '';
+}
+
 function require_login(): void
 {
     if (!is_logged_in()) {
-        redirect('login.php');
+        redirect(base_path() . 'login.php');
     }
 }
 
 function require_admin(): void
 {
     if (!is_admin()) {
-        set_flash('error', 'Anda tidak memiliki akses ke halaman tersebut.');
-        redirect('index.php');
+        set_flash('error', t('access_denied'));
+        redirect(base_path() . 'index.php');
     }
 }
 
@@ -93,7 +105,7 @@ function verify_csrf(): void
     $token = $_POST['csrf_token'] ?? '';
     if (!$token || !hash_equals($_SESSION['csrf_token'] ?? '', $token)) {
         http_response_code(400);
-        die('Sesi Anda telah kedaluwarsa. Silakan muat ulang halaman dan coba lagi.');
+        die(t('csrf_expired'));
     }
 }
 
