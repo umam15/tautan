@@ -14,21 +14,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'resto
     verify_csrf();
 
     if (empty($_FILES['backup_file']) || $_FILES['backup_file']['error'] !== UPLOAD_ERR_OK) {
-        $errors[] = t('backup_error_no_file');
+        $errors[] = 'Pilih file backup (.sqlite) yang valid untuk dipulihkan.';
     } else {
         $tmpPath = $_FILES['backup_file']['tmp_name'];
 
         if (!is_sqlite_file($tmpPath)) {
-            $errors[] = t('backup_error_invalid_sqlite');
+            $errors[] = 'File yang diunggah bukan file database SQLite yang valid.';
         } elseif (!validate_sqlite_schema($tmpPath)) {
-            $errors[] = t('backup_error_invalid_schema');
+            $errors[] = 'Struktur tabel di file tersebut tidak sesuai dengan aplikasi ini (users/links tidak ditemukan).';
         } else {
             try {
                 restore_db_from_upload($tmpPath);
-                set_flash('success', t('backup_restore_success'));
+                set_flash('success', 'Database berhasil dipulihkan dari file backup. Jika Anda logout otomatis, silakan login kembali.');
                 redirect('backup.php');
             } catch (Throwable $e) {
-                $errors[] = t('backup_restore_failed', [':error' => $e->getMessage()]);
+                $errors[] = 'Gagal memulihkan database: ' . $e->getMessage();
             }
         }
     }
@@ -38,13 +38,13 @@ require_once __DIR__ . '/../includes/header.php';
 ?>
 
 <div class="page-head">
-    <h1><?= e(t('settings_title')) ?></h1>
+    <h1>⚙️ Pengaturan</h1>
 </div>
 
 <?php render_settings_tabs('backup'); ?>
 
 <div class="page-head">
-    <h2 style="margin:0;"><?= t('backup_page_title') ?></h2>
+    <h2 style="margin:0;">Backup &amp; Restore Database</h2>
 </div>
 
 <?php foreach ($errors as $err): ?>
@@ -52,29 +52,29 @@ require_once __DIR__ . '/../includes/header.php';
 <?php endforeach; ?>
 
 <div class="form-box">
-    <h2><?= e(t('backup_download_title')) ?></h2>
-    <p><?= t('backup_download_desc') ?></p>
+    <h2>Unduh Backup</h2>
+    <p>Unduh salinan database saat ini (semua user &amp; tautan) sebagai satu file <code>.sqlite</code> yang bisa disimpan sebagai cadangan.</p>
     <div class="form-actions">
-        <a href="backup.php?action=download" class="btn btn-primary"><?= e(t('backup_download_btn')) ?></a>
+        <a href="backup.php?action=download" class="btn btn-primary">⬇️ Unduh Backup Sekarang</a>
     </div>
 </div>
 
 <div class="form-box">
-    <h2><?= e(t('backup_restore_title')) ?></h2>
-    <p><?= t('backup_restore_desc') ?></p>
+    <h2>Pulihkan dari Backup</h2>
+    <p>⚠️ Memulihkan database akan <strong>menimpa seluruh data saat ini</strong> (user &amp; tautan) dengan isi file backup yang diunggah. Salinan database saat ini akan disimpan otomatis terlebih dahulu sebagai jaga-jaga.</p>
     <form method="post"
           action="backup.php"
           enctype="multipart/form-data"
           class="form"
-          onsubmit="return confirm('<?= e(t('backup_restore_confirm')) ?>');">
+          onsubmit="return confirm('Yakin ingin memulihkan database dari file ini? Semua data saat ini akan ditimpa.');">
         <?= csrf_field() ?>
         <input type="hidden" name="action" value="restore">
         <label>
-            <?= e(t('backup_file_label')) ?>
+            File Backup (.sqlite)
             <input type="file" name="backup_file" accept=".sqlite,.db" required>
         </label>
         <div class="form-actions">
-            <button type="submit" class="btn btn-danger"><?= e(t('backup_restore_btn')) ?></button>
+            <button type="submit" class="btn btn-danger">Pulihkan Database</button>
         </div>
     </form>
 </div>

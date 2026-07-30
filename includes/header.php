@@ -6,11 +6,9 @@ $__scriptDir = basename(dirname($_SERVER['SCRIPT_NAME'] ?? $_SERVER['PHP_SELF'] 
 $__is_setup_page = basename($_SERVER['SCRIPT_NAME'] ?? '') === 'setup.php';
 $__base = base_path();
 $__settingsHref = $__scriptDir === 'admin' ? 'settings.php' : $__base . 'admin/settings.php';
-$__currentUrl = $_SERVER['REQUEST_URI'] ?? ($__base . 'index.php');
-$__otherLang = current_lang() === 'id' ? 'en' : 'id';
 ?>
 <!DOCTYPE html>
-<html lang="<?= e(current_lang()) ?>">
+<html lang="id">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -53,21 +51,17 @@ if ('serviceWorker' in navigator) {
     <div class="topbar-inner">
         <a href="<?= e($__base) ?>index.php" class="brand">🔗 <?= e(APP_NAME) ?></a>
         <div class="topbar-right">
-            <a class="lang-toggle" title="<?= e(t('lang_switch_label')) ?>"
-               href="<?= e($__base) ?>switch_lang.php?lang=<?= e($__otherLang) ?>&amp;redirect=<?= urlencode($__currentUrl) ?>">
-                <?= $__otherLang === 'en' ? '🌐 EN' : '🌐 ID' ?>
-            </a>
-            <button type="button" id="theme-toggle" class="theme-toggle" aria-label="<?= e(t('theme_toggle_label')) ?>" title="<?= e(t('theme_toggle_label')) ?>">🌙</button>
+            <button type="button" id="theme-toggle" class="theme-toggle" aria-label="Ganti tema terang/gelap" title="Ganti tema terang/gelap">🌙</button>
             <?php if (!$__is_setup_page): ?>
             <nav class="nav">
                 <?php if ($__user): ?>
-                    <span class="nav-user"><?= e(t('nav_hello')) ?> <strong><?= e($__user['username']) ?></strong> <span class="badge badge-<?= e($__user['role']) ?>"><?= e($__user['role']) ?></span></span>
+                    <span class="nav-user">Halo, <strong><?= e($__user['username']) ?></strong> <span class="badge badge-<?= e($__user['role']) ?>"><?= e($__user['role']) ?></span></span>
                     <?php if ($__user['role'] === 'admin'): ?>
-                        <a href="<?= e($__settingsHref) ?>"><?= e(t('nav_settings')) ?></a>
+                        <a href="<?= e($__settingsHref) ?>">⚙️ Pengaturan</a>
                     <?php endif; ?>
-                    <a href="<?= e($__base) ?>logout.php" onclick="return confirm('<?= e(t('nav_logout_confirm')) ?>');"><?= e(t('nav_logout')) ?></a>
+                    <a href="<?= e($__base) ?>logout.php" onclick="return confirm('Keluar dari akun?');">Logout</a>
                 <?php else: ?>
-                    <a href="<?= e($__base) ?>login.php"><?= e(t('nav_login')) ?></a>
+                    <a href="<?= e($__base) ?>login.php">Login</a>
                 <?php endif; ?>
             </nav>
             <?php endif; ?>

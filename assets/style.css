@@ -97,22 +97,6 @@ a:hover { text-decoration: underline; }
 }
 .theme-toggle:hover { border-color: var(--accent); }
 
-.lang-toggle {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    height: 34px;
-    padding: 0 10px;
-    border-radius: 8px;
-    border: 1px solid var(--card-border);
-    background: var(--bg-soft);
-    color: var(--text);
-    font-size: .85rem;
-    font-weight: 600;
-    white-space: nowrap;
-}
-.lang-toggle:hover { border-color: var(--accent); text-decoration: none; }
-
 .nav { display: flex; align-items: center; gap: 16px; }
 .nav-user { color: var(--text-muted); font-size: .9rem; }
 

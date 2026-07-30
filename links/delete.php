@@ -11,9 +11,9 @@ verify_csrf();
 $id = (int) ($_POST['id'] ?? 0);
 if ($id > 0 && get_link($id)) {
     delete_link($id);
-    set_flash('success', t('link_deleted'));
+    set_flash('success', 'Tautan berhasil dihapus.');
 } else {
-    set_flash('error', t('generic_not_found'));
+    set_flash('error', 'Tautan tidak ditemukan.');
 }
 
 redirect('../index.php');

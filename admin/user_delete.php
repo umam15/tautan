@@ -13,21 +13,21 @@ $id = (int) ($_POST['id'] ?? 0);
 $me = current_user();
 
 if ($id === (int) $me['id']) {
-    set_flash('error', t('user_delete_self_error'));
+    set_flash('error', 'Anda tidak bisa menghapus akun Anda sendiri.');
     redirect('users.php');
 }
 
 $target = get_user($id);
 if (!$target) {
-    set_flash('error', t('user_delete_not_found'));
+    set_flash('error', 'User tidak ditemukan.');
     redirect('users.php');
 }
 
 if ($target['role'] === 'admin' && count_admins() <= 1) {
-    set_flash('error', t('user_delete_last_admin_error'));
+    set_flash('error', 'Tidak bisa menghapus admin terakhir.');
     redirect('users.php');
 }
 
 delete_user($id);
-set_flash('success', t('user_delete_success'));
+set_flash('success', 'User berhasil dihapus.');
 redirect('users.php');

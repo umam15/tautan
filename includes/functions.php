@@ -515,11 +515,11 @@ function footer_text(): string
 function render_settings_tabs(string $active): void
 {
     $tabs = [
-        'ringkasan' => ['settings.php', t('tab_ringkasan')],
-        'users'     => ['users.php', t('tab_users')],
-        'backup'    => ['backup.php', t('tab_backup')],
-        'tampilan'  => ['appearance.php', t('tab_tampilan')],
-        'statistik' => ['stats.php', t('tab_statistik')],
+        'ringkasan' => ['settings.php', '🏠 Ringkasan'],
+        'users'     => ['users.php', '👤 Kelola User'],
+        'backup'    => ['backup.php', '💾 Backup / Restore'],
+        'tampilan'  => ['appearance.php', '🎨 Tampilan'],
+        'statistik' => ['stats.php', '📊 Statistik'],
     ];
     echo '<nav class="tabs">';
     foreach ($tabs as $key => [$href, $label]) {

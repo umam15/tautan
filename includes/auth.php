@@ -4,7 +4,6 @@
  */
 
 require_once __DIR__ . '/../config.php';
-require_once __DIR__ . '/lang.php';
 
 function current_user(): ?array
 {
@@ -59,7 +58,7 @@ function require_login(): void
 function require_admin(): void
 {
     if (!is_admin()) {
-        set_flash('error', t('access_denied'));
+        set_flash('error', 'Anda tidak memiliki akses ke halaman tersebut.');
         redirect(base_path() . 'index.php');
     }
 }
@@ -105,7 +104,7 @@ function verify_csrf(): void
     $token = $_POST['csrf_token'] ?? '';
     if (!$token || !hash_equals($_SESSION['csrf_token'] ?? '', $token)) {
         http_response_code(400);
-        die(t('csrf_expired'));
+        die('Sesi Anda telah kedaluwarsa. Silakan muat ulang halaman dan coba lagi.');
     }
 }
 

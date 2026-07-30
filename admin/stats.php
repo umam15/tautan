@@ -12,15 +12,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($action === 'toggle') {
         set_click_tracking_enabled(!empty($_POST['enabled']));
         set_flash('success', click_tracking_enabled()
-            ? t('stats_toggle_on')
-            : t('stats_toggle_off'));
+            ? 'Statistik klik diaktifkan. Klik baru mulai dicatat sejak sekarang.'
+            : 'Statistik klik dinonaktifkan. Tautan kembali dibuka langsung tanpa dicatat.');
         redirect('stats.php');
     } elseif ($action === 'reset') {
         reset_click_stats();
-        set_flash('success', t('stats_reset_success'));
+        set_flash('success', 'Semua data statistik klik berhasil dihapus.');
         redirect('stats.php');
     } else {
-        $errors[] = t('stats_action_unknown');
+        $errors[] = 'Aksi tidak dikenali.';
     }
 }
 
@@ -32,13 +32,13 @@ require_once __DIR__ . '/../includes/header.php';
 ?>
 
 <div class="page-head">
-    <h1><?= e(t('settings_title')) ?></h1>
+    <h1>⚙️ Pengaturan</h1>
 </div>
 
 <?php render_settings_tabs('statistik'); ?>
 
 <div class="page-head">
-    <h2 style="margin:0;"><?= e(t('stats_page_title')) ?></h2>
+    <h2 style="margin:0;">📊 Statistik Klik</h2>
 </div>
 
 <?php foreach ($errors as $err): ?>
@@ -46,48 +46,53 @@ require_once __DIR__ . '/../includes/header.php';
 <?php endforeach; ?>
 
 <div class="form-box">
-    <h2><?= e(t('stats_enable_title')) ?></h2>
+    <h2>Aktifkan Statistik Klik</h2>
     <p>
-        <?= t('stats_enable_desc') ?>
+        Fitur ini <strong>opsional</strong> dan nonaktif secara default. Saat aktif, tautan
+        di beranda dibuka lewat redirect internal (<code>go.php</code>) yang hanya mencatat
+        <strong>jumlah klik</strong> dan <strong>waktu klik terakhir</strong> per tautan —
+        tidak ada alamat IP, user-agent, referrer, atau identitas pengunjung apa pun yang
+        disimpan. Saat nonaktif, tautan dibuka langsung seperti biasa tanpa request tambahan
+        sama sekali.
     </p>
     <form method="post" action="stats.php" class="form">
         <?= csrf_field() ?>
         <input type="hidden" name="action" value="toggle">
         <label style="flex-direction: row; align-items: center; gap: 8px;">
             <input type="checkbox" name="enabled" value="1" <?= $enabled ? 'checked' : '' ?>>
-            <?= e(t('stats_checkbox_label')) ?>
+            Catat statistik klik per tautan
         </label>
         <div class="form-actions">
-            <button type="submit" class="btn btn-primary"><?= e(t('btn_save')) ?></button>
+            <button type="submit" class="btn btn-primary">Simpan</button>
         </div>
     </form>
 </div>
 
 <div class="form-box">
-    <h2><?= e(t('stats_data_title')) ?></h2>
+    <h2>Data Tersimpan</h2>
     <p>
-        <?= e(t('stats_total_clicks')) ?> <strong><?= (int) $totalClicks ?></strong>
+        Total klik tercatat: <strong><?= (int) $totalClicks ?></strong>
         <?php if (!$enabled && $totalClicks > 0): ?>
-            <?= e(t('stats_total_clicks_note')) ?>
+            (statistik sedang nonaktif — angka di atas adalah data lama sebelum dinonaktifkan)
         <?php endif; ?>
     </p>
-    <form method="post" action="stats.php" onsubmit="return confirm('<?= e(t('stats_reset_confirm')) ?>');">
+    <form method="post" action="stats.php" onsubmit="return confirm('Hapus semua data statistik klik (jumlah klik & waktu klik terakhir di semua tautan)? Tindakan ini tidak bisa dibatalkan.');">
         <?= csrf_field() ?>
         <input type="hidden" name="action" value="reset">
-        <button type="submit" class="btn btn-small btn-danger"><?= e(t('stats_reset_btn')) ?></button>
+        <button type="submit" class="btn btn-small btn-danger">🗑️ Reset Statistik</button>
     </form>
 </div>
 
 <?php if (empty($links)): ?>
-    <p class="empty-state"><?= e(t('stats_empty')) ?></p>
+    <p class="empty-state">Belum ada tautan.</p>
 <?php else: ?>
     <table class="table">
         <thead>
             <tr>
-                <th><?= e(t('stats_col_link')) ?></th>
-                <th><?= e(t('stats_col_visibility')) ?></th>
-                <th><?= e(t('stats_col_clicks')) ?></th>
-                <th><?= e(t('stats_col_last_click')) ?></th>
+                <th>Tautan</th>
+                <th>Visibilitas</th>
+                <th>Klik</th>
+                <th>Klik Terakhir</th>
             </tr>
         </thead>
         <tbody>
@@ -98,7 +103,7 @@ require_once __DIR__ . '/../includes/header.php';
                         <span class="link-url"><?= e($link['url']) ?></span>
                     </td>
                     <td>
-                        <?= $link['visibility'] === 'private' ? e(t('stats_visibility_private')) : e(t('stats_visibility_public')) ?>
+                        <?= $link['visibility'] === 'private' ? '🔒 Privat' : '🌐 Publik' ?>
                     </td>
                     <td><?= (int) $link['click_count'] ?></td>
                     <td><?= $link['last_clicked_at'] ? e($link['last_clicked_at']) : '—' ?></td>

@@ -12,14 +12,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $footerText = trim($_POST['footer_text'] ?? '');
 
     if ($footerText === '') {
-        $errors[] = t('appearance_error_empty');
+        $errors[] = 'Teks footer tidak boleh kosong.';
     } elseif (mb_strlen($footerText) > 150) {
-        $errors[] = t('appearance_error_too_long');
+        $errors[] = 'Teks footer maksimal 150 karakter.';
     }
 
     if (empty($errors)) {
         set_setting('footer_text', $footerText);
-        set_flash('success', t('appearance_success'));
+        set_flash('success', 'Teks footer berhasil disimpan.');
         redirect('appearance.php');
     }
 }
@@ -28,13 +28,13 @@ require_once __DIR__ . '/../includes/header.php';
 ?>
 
 <div class="page-head">
-    <h1><?= e(t('settings_title')) ?></h1>
+    <h1>⚙️ Pengaturan</h1>
 </div>
 
 <?php render_settings_tabs('tampilan'); ?>
 
 <div class="page-head">
-    <h2 style="margin:0;"><?= e(t('appearance_page_title')) ?></h2>
+    <h2 style="margin:0;">Tampilan</h2>
 </div>
 
 <?php foreach ($errors as $err): ?>
@@ -42,16 +42,16 @@ require_once __DIR__ . '/../includes/header.php';
 <?php endforeach; ?>
 
 <div class="form-box">
-    <h2><?= e(t('appearance_footer_title')) ?></h2>
-    <p><?= e(t('appearance_footer_desc')) ?></p>
+    <h2>Teks Footer</h2>
+    <p>Teks ini tampil di bagian bawah setiap halaman, menggantikan nama aplikasi default.</p>
     <form method="post" action="appearance.php" class="form">
         <?= csrf_field() ?>
         <label>
-            <?= e(t('appearance_label')) ?>
+            Teks Footer
             <input type="text" name="footer_text" required maxlength="150" value="<?= e($footerText) ?>">
         </label>
         <div class="form-actions">
-            <button type="submit" class="btn btn-primary"><?= e(t('btn_save')) ?></button>
+            <button type="submit" class="btn btn-primary">Simpan</button>
         </div>
     </form>
 </div>

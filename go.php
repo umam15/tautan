@@ -13,14 +13,14 @@ $link = $id > 0 ? get_link($id) : null;
 
 if (!$link) {
     http_response_code(404);
-    exit(t('generic_not_found'));
+    exit('Tautan tidak ditemukan.');
 }
 
 // Tautan privat tetap hanya boleh "dibuka" lewat sini oleh yang sudah login,
 // sama seperti aturan tampil di beranda (get_links()).
 if ($link['visibility'] === 'private' && !is_logged_in()) {
     http_response_code(404);
-    exit(t('generic_not_found'));
+    exit('Tautan tidak ditemukan.');
 }
 
 if (click_tracking_enabled()) {

@@ -50,26 +50,26 @@ require_once __DIR__ . '/includes/header.php';
 ?>
 
 <div class="page-head">
-    <h1><?= e(t('home_title')) ?></h1>
+    <h1>Daftar Tautan</h1>
     <?php if ($loggedIn): ?>
         <div class="page-head-actions">
-            <a href="links/import.php" class="btn"><?= e(t('home_import_btn')) ?></a>
+            <a href="links/import.php" class="btn">⬆️ Impor Bookmark</a>
             <details class="dropdown">
-                <summary class="btn"><?= e(t('home_export_btn')) ?></summary>
+                <summary class="btn">⬇️ Ekspor</summary>
                 <div class="dropdown-menu">
-                    <a href="<?= e(export_url('json', $q, $activeTag)) ?>"><?= e(t('home_export_json')) ?></a>
-                    <a href="<?= e(export_url('csv', $q, $activeTag)) ?>"><?= e(t('home_export_csv')) ?></a>
-                    <a href="<?= e(export_url('html', $q, $activeTag)) ?>"><?= e(t('home_export_bookmark')) ?></a>
+                    <a href="<?= e(export_url('json', $q, $activeTag)) ?>">Ekspor JSON</a>
+                    <a href="<?= e(export_url('csv', $q, $activeTag)) ?>">Ekspor CSV</a>
+                    <a href="<?= e(export_url('html', $q, $activeTag)) ?>">Ekspor Bookmark</a>
                 </div>
             </details>
-            <a href="links/form.php" class="btn btn-primary"><?= e(t('home_add_btn')) ?></a>
+            <a href="links/form.php" class="btn btn-primary">+ Tambah Tautan</a>
         </div>
     <?php endif; ?>
 </div>
 
 <?php if (!empty($allTags)): ?>
     <div class="tag-filter-bar">
-        <a href="<?= e(tag_filter_url('', $q)) ?>" class="tab <?= $activeTag === '' ? 'tab-active' : '' ?>"><?= e(t('home_tag_all')) ?></a>
+        <a href="<?= e(tag_filter_url('', $q)) ?>" class="tab <?= $activeTag === '' ? 'tab-active' : '' ?>">Semua</a>
         <?php foreach ($allTags as $t): ?>
             <a href="<?= e(tag_filter_url($t['tag'], $q)) ?>"
                class="tab <?= mb_strtolower($activeTag) === mb_strtolower($t['tag']) ? 'tab-active' : '' ?>">
@@ -82,7 +82,7 @@ require_once __DIR__ . '/includes/header.php';
 <?php if (!empty($links) || $q !== '' || $activeTag !== ''): ?>
     <form method="get" action="index.php" class="search-bar">
         <span class="search-icon">🔍</span>
-        <input type="text" id="link-search" name="q" placeholder="<?= e(t('home_search_placeholder')) ?>" autocomplete="off" value="<?= e($q) ?>">
+        <input type="text" id="link-search" name="q" placeholder="Cari tautan..." autocomplete="off" value="<?= e($q) ?>">
         <?php if ($activeTag !== ''): ?>
             <input type="hidden" name="tag" value="<?= e($activeTag) ?>">
         <?php endif; ?>
@@ -91,19 +91,19 @@ require_once __DIR__ . '/includes/header.php';
 <?php endif; ?>
 
 <?php if (empty($links) && $q === '' && $activeTag === ''): ?>
-    <p class="empty-state"><?= e(t('home_empty_none')) ?></p>
+    <p class="empty-state">Belum ada tautan untuk ditampilkan.</p>
 <?php elseif (empty($links) && $activeTag !== ''): ?>
     <p class="empty-state">
-        <?= e(t('home_empty_tag', [':tag' => $activeTag])) ?><?= $q !== '' ? e(t('home_empty_tag_q_suffix', [':q' => $q])) : '' ?>.
-        <a href="<?= e(tag_filter_url('', '')) ?>"><?= e(t('home_empty_tag_clear')) ?></a>
+        Tidak ada tautan dengan tag "<?= e($activeTag) ?>"<?= $q !== '' ? ' yang cocok dengan "' . e($q) . '"' : '' ?>.
+        <a href="<?= e(tag_filter_url('', '')) ?>">Hapus filter</a>
     </p>
 <?php elseif (empty($links)): ?>
     <p class="empty-state">
-        <?= e(t('home_empty_query', [':q' => $q])) ?>
-        <a href="index.php"><?= e(t('home_empty_query_clear')) ?></a>
+        Tidak ada tautan yang cocok dengan "<?= e($q) ?>".
+        <a href="index.php">Hapus pencarian</a>
     </p>
 <?php else: ?>
-    <p id="search-empty" class="empty-state" hidden><?= e(t('home_search_empty_js')) ?></p>
+    <p id="search-empty" class="empty-state" hidden>Tidak ada tautan yang cocok.</p>
     <div id="links-grid" class="links-grid" data-reorder-url="links/reorder.php" data-can-edit="<?= $loggedIn ? '1' : '0' ?>">
         <?php foreach ($links as $link): ?>
             <?php $linkTags = tags_from_storage($link['tags'] ?? ''); ?>
@@ -111,7 +111,7 @@ require_once __DIR__ . '/includes/header.php';
                  data-id="<?= (int) $link['id'] ?>"
                  data-search="<?= e(mb_strtolower($link['title'] . ' ' . $link['description'] . ' ' . $link['url'] . ' ' . implode(' ', $linkTags))) ?>">
                 <?php if ($loggedIn): ?>
-                    <span class="drag-handle" title="<?= e(t('home_drag_handle_title')) ?>">⠿</span>
+                    <span class="drag-handle" title="Geser untuk mengubah urutan">⠿</span>
                 <?php endif; ?>
 
                 <div class="link-body">
@@ -127,10 +127,10 @@ require_once __DIR__ . '/includes/header.php';
                             <span class="link-title">
                                 <?= e($link['title']) ?>
                                 <?php if ($link['visibility'] === 'private'): ?>
-                                    <span class="lock" title="<?= e(t('home_private_lock_title')) ?>">🔒</span>
+                                    <span class="lock" title="Hanya terlihat oleh user login">🔒</span>
                                 <?php endif; ?>
                                 <?php if ($clickTrackingOn && $loggedIn): ?>
-                                    <span class="click-badge" title="<?= e(t('home_click_badge_title')) ?>">👆 <?= (int) ($link['click_count'] ?? 0) ?></span>
+                                    <span class="click-badge" title="Jumlah klik (hanya terlihat oleh user login)">👆 <?= (int) ($link['click_count'] ?? 0) ?></span>
                                 <?php endif; ?>
                             </span>
                             <?php if (!empty($link['description'])): ?>
@@ -151,11 +151,11 @@ require_once __DIR__ . '/includes/header.php';
 
                 <?php if ($loggedIn): ?>
                     <div class="link-actions">
-                        <a href="links/form.php?id=<?= (int) $link['id'] ?>" class="btn btn-small"><?= e(t('btn_edit')) ?></a>
-                        <form method="post" action="links/delete.php" onsubmit="return confirm('<?= e(t('home_delete_confirm')) ?>');">
+                        <a href="links/form.php?id=<?= (int) $link['id'] ?>" class="btn btn-small">Edit</a>
+                        <form method="post" action="links/delete.php" onsubmit="return confirm('Hapus tautan ini?');">
                             <?= csrf_field() ?>
                             <input type="hidden" name="id" value="<?= (int) $link['id'] ?>">
-                            <button type="submit" class="btn btn-small btn-danger"><?= e(t('btn_delete')) ?></button>
+                            <button type="submit" class="btn btn-small btn-danger">Hapus</button>
                         </form>
                     </div>
                 <?php endif; ?>

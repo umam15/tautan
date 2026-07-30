@@ -13,15 +13,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $skipDuplicates = !empty($_POST['skip_duplicates']);
 
     if (empty($_FILES['bookmark_file']) || $_FILES['bookmark_file']['error'] !== UPLOAD_ERR_OK) {
-        $errors[] = t('import_error_no_file');
+        $errors[] = 'Pilih file HTML hasil ekspor bookmark browser terlebih dahulu.';
     } elseif ($_FILES['bookmark_file']['size'] > IMPORT_MAX_FILE_SIZE) {
-        $errors[] = t('import_error_too_large');
+        $errors[] = 'Ukuran file terlalu besar (maksimum 5 MB).';
     } else {
         $html   = (string) file_get_contents($_FILES['bookmark_file']['tmp_name']);
         $parsed = parse_bookmark_html($html);
 
         if (empty($parsed)) {
-            $errors[] = t('import_error_no_links');
+            $errors[] = 'Tidak ada tautan yang ditemukan di file tersebut. Pastikan ini file ekspor bookmark HTML (Netscape Bookmark Format) dari browser — biasanya lewat menu "Bookmark Manager → Export Bookmarks".';
         } else {
             // Ambil semua URL yang sudah ada sekali di awal (bukan query per-link),
             // lalu dipakai sebagai lookup di memori sekaligus dipakai mencegah
@@ -41,9 +41,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $imported++;
             }
 
-            $message = t('import_success', [':imported' => (string) $imported]);
+            $message = "Impor selesai: {$imported} tautan baru ditambahkan";
             if ($skipped > 0) {
-                $message .= t('import_success_skipped', [':skipped' => (string) $skipped]);
+                $message .= ", {$skipped} dilewati karena URL sudah ada";
             }
             $message .= '.';
             set_flash('success', $message);
@@ -56,9 +56,15 @@ require_once __DIR__ . '/../includes/header.php';
 ?>
 
 <div class="form-box">
-    <h1><?= e(t('import_title')) ?></h1>
+    <h1>Impor Tautan dari Bookmark Browser</h1>
     <p>
-        <?= t('import_intro') ?>
+        Unggah file HTML hasil ekspor bookmark dari Chrome, Firefox, Edge, Safari, dsb
+        (biasanya lewat menu <em>Bookmark Manager → Export Bookmarks</em>), atau file
+        hasil "Ekspor Bookmark" dari Tautan sendiri. Semua tautan di dalamnya akan
+        ditambahkan ke daftar. Tag ikut diimpor kalau file bookmark menyertakan atribut
+        <code>TAGS=</code> (dipakai Firefox & ekspor Tautan — Chrome/Edge/Safari biasanya
+        tidak menuliskannya). Struktur folder pada file bookmark tetap tidak dipertahankan,
+        karena aplikasi ini belum mendukungnya.
     </p>
 
     <?php foreach ($errors as $err): ?>
@@ -69,32 +75,32 @@ require_once __DIR__ . '/../includes/header.php';
         <?= csrf_field() ?>
 
         <label>
-            <?= e(t('import_file_label')) ?>
+            File Bookmark (.html)
             <input type="file" name="bookmark_file" accept=".html,.htm" required>
         </label>
 
         <label class="radio-group">
-            <?= e(t('import_visibility_label')) ?>
+            Visibilitas tautan yang diimpor
             <span class="radio-options">
                 <label class="radio-inline">
                     <input type="radio" name="visibility" value="public" checked>
-                    <?= e(t('link_form_vis_public')) ?>
+                    Publik (semua orang bisa lihat)
                 </label>
                 <label class="radio-inline">
                     <input type="radio" name="visibility" value="private">
-                    <?= e(t('link_form_vis_private')) ?>
+                    🔒 Hanya user login
                 </label>
             </span>
         </label>
 
         <label class="radio-inline">
             <input type="checkbox" name="skip_duplicates" value="1" checked>
-            <?= e(t('import_skip_duplicates_label')) ?>
+            Lewati tautan yang URL-nya sudah ada di daftar
         </label>
 
         <div class="form-actions">
-            <button type="submit" class="btn btn-primary"><?= e(t('import_submit')) ?></button>
-            <a href="../index.php" class="btn"><?= e(t('btn_cancel')) ?></a>
+            <button type="submit" class="btn btn-primary">Impor Tautan</button>
+            <a href="../index.php" class="btn">Batal</a>
         </div>
     </form>
 </div>

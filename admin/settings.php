@@ -30,7 +30,7 @@ require_once __DIR__ . '/../includes/header.php';
 ?>
 
 <div class="page-head">
-    <h1><?= e(t('settings_title')) ?></h1>
+    <h1>⚙️ Pengaturan</h1>
     <p class="page-head-sub"><?= e(APP_NAME) ?> v<?= e(APP_VERSION) ?></p>
 </div>
 
@@ -39,34 +39,34 @@ require_once __DIR__ . '/../includes/header.php';
 <div class="settings-grid">
     <a href="users.php" class="settings-card">
         <div class="settings-card-icon">👤</div>
-        <h2><?= e(t('settings_users_title')) ?></h2>
-        <p><?= t('settings_users_desc', [':count' => (string) $userCount, ':admins' => (string) $adminCount]) ?></p>
+        <h2>Kelola User</h2>
+        <p><?= (int) $userCount ?> user terdaftar &middot; <?= (int) $adminCount ?> admin</p>
     </a>
     <a href="backup.php" class="settings-card">
         <div class="settings-card-icon">💾</div>
-        <h2><?= t('settings_backup_title') ?></h2>
+        <h2>Backup &amp; Restore</h2>
         <p>
-            <?= t('settings_backup_links', [':count' => (string) $linkCount]) ?>
+            <?= (int) $linkCount ?> tautan tersimpan
             <?php if ($lastBackupAt): ?>
-                <?= t('settings_backup_last', [':date' => e($lastBackupAt)]) ?>
+                &middot; salinan pengaman terakhir: <?= e($lastBackupAt) ?>
             <?php else: ?>
-                <?= t('settings_backup_none') ?>
+                &middot; belum ada salinan pengaman otomatis
             <?php endif; ?>
         </p>
     </a>
     <a href="appearance.php" class="settings-card">
         <div class="settings-card-icon">🎨</div>
-        <h2><?= e(t('settings_appearance_title')) ?></h2>
-        <p><?= e(t('settings_appearance_desc')) ?></p>
+        <h2>Tampilan</h2>
+        <p>Ubah teks footer aplikasi</p>
     </a>
     <a href="stats.php" class="settings-card">
         <div class="settings-card-icon">📊</div>
-        <h2><?= e(t('settings_stats_title')) ?></h2>
+        <h2>Statistik</h2>
         <p>
             <?php if (click_tracking_enabled()): ?>
-                <?= t('settings_stats_active', [':count' => (string) $totalClicks]) ?>
+                Aktif &middot; <?= $totalClicks ?> klik tercatat
             <?php else: ?>
-                <?= e(t('settings_stats_inactive')) ?>
+                Nonaktif (opsional, hormati privasi)
             <?php endif; ?>
         </p>
     </a>
