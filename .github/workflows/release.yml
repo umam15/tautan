@@ -1,0 +1,76 @@
+name: Auto Release dari CHANGELOG
+
+# Jalan otomatis tiap kali CHANGELOG.md berubah di branch main,
+# atau bisa dipicu manual lewat tab Actions (workflow_dispatch).
+on:
+  push:
+    branches: [main]
+    paths:
+      - CHANGELOG.md
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Ambil versi & catatan rilis dari CHANGELOG.md
+        id: changelog
+        run: |
+          # Heading versi terbaru diasumsikan paling atas, format: "## v0.2.15"
+          VERSION=$(grep -m 1 -E '^## v[0-9]+\.[0-9]+\.[0-9]+' CHANGELOG.md \
+            | sed -E 's/^## (v[0-9]+\.[0-9]+\.[0-9]+).*/\1/')
+
+          if [ -z "$VERSION" ]; then
+            echo "::error::Tidak menemukan heading versi (## vX.Y.Z) di CHANGELOG.md"
+            exit 1
+          fi
+
+          # Ambil isi di bawah heading versi tsb sampai sebelum heading "## " berikutnya
+          NOTES=$(awk -v ver="## $VERSION" '
+            $0 == ver { found=1; next }
+            found && /^## / { exit }
+            found { print }
+          ' CHANGELOG.md)
+
+          if [ -z "$(echo "$NOTES" | tr -d '[:space:]')" ]; then
+            echo "::error::Isi catatan rilis untuk $VERSION kosong"
+            exit 1
+          fi
+
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          {
+            echo "notes<<CHANGELOG_EOF"
+            echo "$NOTES"
+            echo "CHANGELOG_EOF"
+          } >> "$GITHUB_OUTPUT"
+
+          echo "Versi terdeteksi: $VERSION"
+
+      - name: Cek apakah tag sudah pernah dirilis
+        id: check_tag
+        run: |
+          if git ls-remote --tags origin | grep -q "refs/tags/${{ steps.changelog.outputs.version }}$"; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+            echo "Tag ${{ steps.changelog.outputs.version }} sudah ada, lewati rilis."
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Buat tag & GitHub Release
+        if: steps.check_tag.outputs.exists == 'false'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.changelog.outputs.version }}
+          name: ${{ steps.changelog.outputs.version }}
+          body: ${{ steps.changelog.outputs.notes }}
+          target_commitish: ${{ github.sha }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
