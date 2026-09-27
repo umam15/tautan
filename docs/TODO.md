@@ -5,8 +5,6 @@
 
 ## P0 — Security & Correctness
 - [ ] **P0** Harden outbound requests jika fitur pengambilan metadata/favicons eksternal diaktifkan kembali.
-- [ ] **P0** Terapkan CSRF protection pada seluruh operasi state-changing (CRUD, reorder, import, backup/restore, pengaturan).
-- [ ] **P0** Audit dan perketat validasi URL bookmark; hanya `http://` dan `https://`, dengan normalisasi yang konsisten.
 - [ ] **P0** Audit lifecycle password/session: logout, session invalidation, dan perubahan password.
 
 ## P1 — Performance & Reliability
