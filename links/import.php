@@ -31,23 +31,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $imported = 0;
             $skipped  = 0;
-            foreach ($parsed as $item) {
-                if ($skipDuplicates && isset($existingUrls[$item['url']])) {
-                    $skipped++;
-                    continue;
+            $pdo = db();
+
+            try {
+                $pdo->beginTransaction();
+
+                foreach ($parsed as $item) {
+                    if ($skipDuplicates && isset($existingUrls[$item['url']])) {
+                        $skipped++;
+                        continue;
+                    }
+                    create_link($item['title'], $item['url'], '', $item['icon'], $visibility, $user['id'], $item['tags']);
+                    $existingUrls[$item['url']] = true;
+                    $imported++;
                 }
-                create_link($item['title'], $item['url'], '', $item['icon'], $visibility, $user['id'], $item['tags']);
-                $existingUrls[$item['url']] = true;
-                $imported++;
+
+                $pdo->commit();
+            } catch (Throwable $e) {
+                if ($pdo->inTransaction()) {
+                    $pdo->rollBack();
+                }
+                error_log('Bookmark import failed: ' . $e->getMessage());
+                $errors[] = 'Impor gagal. Tidak ada perubahan yang disimpan.';
             }
 
-            $message = "Impor selesai: {$imported} tautan baru ditambahkan";
+            if (empty($errors)) {
+                $message = "Impor selesai: {$imported} tautan baru ditambahkan";
             if ($skipped > 0) {
                 $message .= ", {$skipped} dilewati karena URL sudah ada";
             }
-            $message .= '.';
-            set_flash('success', $message);
-            redirect('../index.php');
+                $message .= '.';
+                set_flash('success', $message);
+                redirect('../index.php');
+            }
         }
     }
 }
