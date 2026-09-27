@@ -1,5 +1,9 @@
 <?php
 require_once __DIR__ . '/includes/functions.php';
+require_once __DIR__ . '/includes/migrations.php';
+
+// First-run setup adalah satu-satunya request yang boleh bootstrap schema.
+migrate_database(db());
 
 // Kalau sudah pernah ada user (instalasi sudah di-setup), halaman ini tidak boleh diakses lagi
 if (has_any_user()) {
