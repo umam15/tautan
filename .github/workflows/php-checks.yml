@@ -32,3 +32,9 @@ jobs:
 
       - name: Import/export regression test
         run: php tests/import-export.php
+
+      - name: Database health check
+        run: |
+          mkdir -p data
+          php scripts/migrate.php
+          php scripts/check-db.php
