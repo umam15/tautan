@@ -9,7 +9,7 @@ Aplikasi manajemen bookmark/tautan sederhana berbasis PHP + PDO SQLite.
 - **User login**: tambah/edit/hapus link, drag-and-drop urutan, tag/kategori dengan filter & pencarian, ekspor daftar link (JSON/CSV), impor bookmark dari file HTML browser.
 - **Tamu**: bisa lihat link publik tanpa login.
 - Bisa diinstall sebagai PWA (manifest + service worker), dark mode, cache favicon lokal.
-- Tidak memakai webfont/CDN font: UI menggunakan system fonts yang sudah tersedia di perangkat.
+- Semua asset aplikasi bersifat lokal/offline-first: tanpa webfont, CDN, remote JavaScript/CSS, atau layanan favicon pihak ketiga.
 - Keamanan dasar: password hash, prepared statement, proteksi CSRF, output escape (XSS-safe).
 
 ## Struktur Folder
