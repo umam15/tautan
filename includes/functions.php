@@ -150,14 +150,14 @@ function normalize_tags(string $raw): array
         if ($t === '') {
             continue;
         }
-        $t = mb_substr($t, 0, 40);
+        $t = mb_substr($t, 0, MAX_TAG_LENGTH);
         $key = mb_strtolower($t);
         if (isset($seen[$key])) {
             continue;
         }
         $seen[$key] = true;
         $tags[] = $t;
-        if (count($tags) >= 20) {
+        if (count($tags) >= MAX_TAGS) {
             break;
         }
     }
@@ -359,7 +359,7 @@ function parse_bookmark_html(string $html): array
         $tags = tags_to_storage(tags_from_storage($a->getAttribute('tags')));
 
         $links[] = [
-            'title' => mb_substr($title, 0, 255),
+            'title' => mb_substr($title, 0, MAX_TITLE_LENGTH),
             'url'   => $href,
             'icon'  => $icon,
             'tags'  => $tags,
@@ -700,7 +700,7 @@ function stream_links_export(string $format, array $links): void
  */
 function is_sqlite_file(string $path): bool
 {
-    if (!is_file($path) || filesize($path) > 64 * 1024 * 1024) {
+    if (!is_file($path) || filesize($path) > BACKUP_MAX_FILE_SIZE) {
         return false;
     }
 
