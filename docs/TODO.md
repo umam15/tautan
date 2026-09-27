@@ -17,8 +17,8 @@
 - [x] **P1** Bungkus import bookmark dalam satu transaction.
 - [x] **P1** Harden session cookie configuration.
 - [x] **P1** Tambahkan login throttling/backoff.
-- [ ] **P1** Perbaiki error handling backup/restore agar detail exception tidak bocor.
-- [ ] **P1** Tambahkan batas ukuran backup secara eksplisit.
+- [x] **P1** Perbaiki error handling backup/restore agar detail exception tidak bocor.
+- [x] **P1** Tambahkan batas ukuran backup secara eksplisit.
 
 ## P2 — Maintainability & Scale
 - [ ] **P2** Centralize validation dan resource limits.
