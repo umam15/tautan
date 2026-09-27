@@ -16,7 +16,7 @@
 - [ ] **P1** Pindahkan schema checks/migrations dari request path ke migration/setup flow.
 - [x] **P1** Bungkus import bookmark dalam satu transaction.
 - [x] **P1** Harden session cookie configuration.
-- [ ] **P1** Tambahkan login throttling/backoff.
+- [x] **P1** Tambahkan login throttling/backoff.
 - [ ] **P1** Perbaiki error handling backup/restore agar detail exception tidak bocor.
 - [ ] **P1** Tambahkan batas ukuran backup secara eksplisit.
 
