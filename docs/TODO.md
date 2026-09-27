@@ -13,7 +13,7 @@
 
 ## P1 — Performance & Reliability
 - [x] **P1** Enable SQLite WAL + `busy_timeout` setelah memastikan deployment memakai local storage.
-- [ ] **P1** Pindahkan schema checks/migrations dari request path ke migration/setup flow.
+- [ ] **P1** Pindahkan schema checks/migrations sepenuhnya dari request path ke migration/setup flow. (Saat ini sudah version-gated; migration hanya berjalan saat versi schema berubah.)
 - [x] **P1** Bungkus import bookmark dalam satu transaction.
 - [x] **P1** Harden session cookie configuration.
 - [x] **P1** Tambahkan login throttling/backoff.
