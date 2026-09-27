@@ -32,7 +32,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 define('APP_NAME', 'Tautan');
-define('APP_VERSION', '0.2.17');
+define('APP_VERSION', '0.2.18');
 define('DB_DIR', __DIR__ . '/data');
 define('DB_PATH', DB_DIR . '/bookmarks.sqlite');
 // Cache lokal favicon (lihat favicon.php) — disimpan di dalam data/ supaya
