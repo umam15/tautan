@@ -104,7 +104,7 @@ require_once __DIR__ . '/includes/header.php';
     </p>
 <?php else: ?>
     <p id="search-empty" class="empty-state" hidden>Tidak ada tautan yang cocok.</p>
-    <div id="links-grid" class="links-grid" data-reorder-url="links/reorder.php" data-can-edit="<?= $loggedIn ? '1' : '0' ?>">
+    <div id="links-grid" class="links-grid" data-reorder-url="links/reorder.php" data-can-edit="<?= is_admin() ? '1' : '0' ?>">
         <?php foreach ($links as $link): ?>
             <?php $linkTags = tags_from_storage($link['tags'] ?? ''); ?>
             <div class="link-card <?= $link['visibility'] === 'private' ? 'link-private' : '' ?>"
