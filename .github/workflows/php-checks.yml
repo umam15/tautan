@@ -25,3 +25,7 @@ jobs:
             links
             admin
             scripts
+            tests
+
+      - name: Authorization regression test
+        run: php tests/authorization.php
