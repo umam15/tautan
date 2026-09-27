@@ -565,8 +565,9 @@ function stream_db_backup(): void
         // tanpa mengganggu koneksi yang sedang berjalan.
         db()->exec('VACUUM INTO ' . db()->quote($tmpPath));
     } catch (Throwable $e) {
+        error_log('Database backup failed: ' . $e->getMessage());
         http_response_code(500);
-        die('Gagal membuat backup database: ' . e($e->getMessage()));
+        die('Gagal membuat backup database. Silakan coba lagi.');
     }
 
     $filename = backup_db_filename();
