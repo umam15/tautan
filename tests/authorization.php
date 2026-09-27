@@ -7,6 +7,7 @@ declare(strict_types=1);
  */
 define('TESTING', true);
 require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/../includes/functions.php';
 
 $_SESSION = [];
 
