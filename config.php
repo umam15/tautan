@@ -8,6 +8,13 @@ error_reporting(E_ALL);
 ini_set('display_errors', '0'); // matikan di production, aktifkan saat debug jika perlu
 
 if (session_status() === PHP_SESSION_NONE) {
+    $https = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
+    ini_set('session.use_strict_mode', '1');
+    ini_set('session.cookie_httponly', '1');
+    ini_set('session.cookie_samesite', 'Lax');
+    if ($https) {
+        ini_set('session.cookie_secure', '1');
+    }
     session_start();
 }
 
