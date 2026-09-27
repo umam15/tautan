@@ -22,7 +22,7 @@
 
 ## P2 — Maintainability & Scale
 - [ ] **P2** Centralize validation dan resource limits.
-- [ ] **P2** Tambahkan automated PHP syntax/static checks di CI.
+- [x] **P2** Tambahkan automated PHP syntax/static checks di CI.
 - [ ] **P2** Tambahkan regression tests authorization dan import/export.
 - [ ] **P2** Split `includes/functions.php` berdasarkan domain.
 - [-] **P2** Normalize tags — hanya jika dataset/search menjadi bottleneck terukur.
