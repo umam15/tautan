@@ -12,7 +12,7 @@ $__settingsHref = $__scriptDir === 'admin' ? 'settings.php' : $__base . 'admin/s
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; connect-src 'self'; font-src 'self'; img-src 'self' data:; object-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; form-action 'self';">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; connect-src 'self'; font-src 'self'; img-src 'self' data: http: https:; object-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; form-action 'self';">
 <title><?= e(APP_NAME) ?></title>
 
 <!-- Set tema (terang/gelap) sebelum CSS dirender, supaya tidak ada "kedip"
