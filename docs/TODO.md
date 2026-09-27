@@ -5,7 +5,6 @@
 
 ## P0 — Security & Correctness
 - [ ] **P0** Harden outbound requests jika fitur pengambilan metadata/favicons eksternal diaktifkan kembali.
-- [ ] **P0** Audit lifecycle password/session: logout, session invalidation, dan perubahan password.
 
 ## P1 — Performance & Reliability
 
