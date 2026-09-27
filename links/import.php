@@ -2,8 +2,6 @@
 require_once __DIR__ . '/../includes/functions.php';
 require_login();
 
-const IMPORT_MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB — cukup besar untuk ribuan bookmark
-
 $errors = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
