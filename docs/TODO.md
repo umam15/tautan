@@ -8,7 +8,6 @@
 - [ ] **P0** Audit lifecycle password/session: logout, session invalidation, dan perubahan password.
 
 ## P1 — Performance & Reliability
-- [ ] **P1** Tambahkan offline smoke test dengan network diblokir; pengecualian hanya icon bookmark eksternal.
 
 ## P2 — Maintainability & Scale
 - [-] **P2** Split `includes/functions.php` berdasarkan domain — ditahan: fungsi global masih menjadi API internal lintas halaman; perlu test coverage lebih luas sebelum refactor struktural.
