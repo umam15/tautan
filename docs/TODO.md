@@ -4,12 +4,16 @@
 > Status: `[ ]` belum dikerjakan, `[x]` selesai, `[-]` ditunda sampai ada data/benchmark.
 
 ## P0 — Security & Correctness
-- [x] **P0** Enforce link ownership pada edit/update.
-- [x] **P0** Enforce link ownership pada delete.
-- [x] **P0** Validate reorder IDs dan ownership.
-- [x] **P0** Remove remote favicon service dependency; favicon aplikasi memakai fallback lokal.
-- [x] **P0** Remove frontend CDN dependency; aplikasi tidak bergantung pada CDN untuk berjalan.
 - [ ] **P0** Harden outbound requests jika fitur pengambilan metadata/favicons eksternal diaktifkan kembali.
+- [ ] **P0** Terapkan CSRF protection pada seluruh operasi state-changing (CRUD, reorder, import, backup/restore, pengaturan).
+- [ ] **P0** Audit dan perketat validasi URL bookmark; hanya `http://` dan `https://`, dengan normalisasi yang konsisten.
+- [ ] **P0** Audit lifecycle password/session: logout, session invalidation, dan perubahan password.
+
+## P1 — Performance & Reliability
+- [ ] **P1** Tambahkan security headers (CSP, X-Content-Type-Options, Referrer-Policy, Permissions-Policy; HSTS hanya untuk deployment HTTPS).
+- [ ] **P1** Jadikan backup atomic: temporary file → flush/sync yang sesuai → rename.
+- [ ] **P1** Tambahkan `php scripts/check-db.php` untuk `PRAGMA integrity_check` dan validasi schema version.
+- [ ] **P1** Tambahkan offline smoke test dengan network diblokir; pengecualian hanya icon bookmark eksternal.
 
 ## P1 — Performance & Reliability
 - [x] **P1** Enable SQLite WAL + `busy_timeout` setelah memastikan deployment memakai local storage.
