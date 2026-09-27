@@ -7,6 +7,19 @@
 error_reporting(E_ALL);
 ini_set('display_errors', '0'); // matikan di production, aktifkan saat debug jika perlu
 
+// Security headers sent on every application response.
+// Remote bookmark icons remain allowed through img-src https:; application
+// scripts/styles/fonts remain local for offline-first operation.
+if (!headers_sent()) {
+    header("X-Content-Type-Options: nosniff");
+    header("Referrer-Policy: strict-origin-when-cross-origin");
+    header("Permissions-Policy: camera=(), microphone=(), geolocation=()");
+    header("Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' data: https:;");
+    if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') {
+        header("Strict-Transport-Security: max-age=31536000");
+    }
+}
+
 if (session_status() === PHP_SESSION_NONE) {
     $https = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
     ini_set('session.use_strict_mode', '1');
