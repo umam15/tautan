@@ -27,6 +27,12 @@ define('DB_PATH', DB_DIR . '/bookmarks.sqlite');
 // tidak bisa diakses langsung lewat URL, harus lewat favicon.php.
 define('FAVICON_DIR', DB_DIR . '/favicons');
 
+define('IMPORT_MAX_FILE_SIZE', 5 * 1024 * 1024);
+define('BACKUP_MAX_FILE_SIZE', 64 * 1024 * 1024);
+define('MAX_TAGS', 20);
+define('MAX_TAG_LENGTH', 40);
+define('MAX_TITLE_LENGTH', 255);
+
 // Pastikan folder data ada & bisa ditulis
 if (!is_dir(DB_DIR)) {
     mkdir(DB_DIR, 0775, true);
