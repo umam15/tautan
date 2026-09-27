@@ -31,6 +31,11 @@ assert_same('Work,Example', $parsed[0]['tags'], 'bookmark tags are preserved');
 assert_same('data:image/png;base64,AAAA', $parsed[0]['icon'], 'embedded local icon is preserved');
 assert_same('', $parsed[1]['icon'], 'missing icon remains empty');
 
+assert_same('https://example.com', normalize_url('example.com'), 'bare bookmark host gets HTTPS scheme');
+assert_same('https://example.com/path', normalize_url('https://example.com/path'), 'HTTPS URL is preserved');
+assert_same('', normalize_url('javascript:alert(1)'), 'javascript scheme is rejected');
+assert_same('', normalize_url('file:///tmp/test'), 'file scheme is rejected');
+
 $tags = normalize_tags('Work, work,  Example  ,,,Example');
 assert_same(['Work', 'Example'], $tags, 'tag normalization removes duplicates case-insensitively');
 
