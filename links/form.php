@@ -41,8 +41,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($values['url'] === '' || !filter_var($values['url'], FILTER_VALIDATE_URL)) {
         $errors[] = 'URL tidak valid.';
     }
-    if ($values['icon'] !== '' && !filter_var($values['icon'], FILTER_VALIDATE_URL)) {
-        $errors[] = 'URL ikon tidak valid.';
+    if ($values['icon'] !== '' && !preg_match('#^data:image/(?:png|jpeg|gif|webp|svg\\+xml);base64,[A-Za-z0-9+/=]+$#i', $values['icon'])) {
+        $errors[] = 'Ikon harus berupa data:image lokal (base64), bukan URL eksternal.';
     }
 
     if (empty($errors)) {
@@ -89,9 +89,9 @@ require_once __DIR__ . '/../includes/header.php';
         </label>
 
         <label>
-            URL Ikon (opsional)
-            <input type="text" name="icon" value="<?= e($values['icon']) ?>" placeholder="https://contoh.com/icon.png">
-            <small class="field-hint">Kosongkan agar ikon terisi otomatis.</small>
+            Ikon lokal (opsional)
+            <input type="text" name="icon" value="<?= e($values['icon']) ?>" placeholder="data:image/png;base64,...">
+            <small class="field-hint">Kosongkan untuk memakai ikon default lokal.</small>
         </label>
 
         <label>
