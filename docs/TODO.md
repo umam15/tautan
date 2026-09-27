@@ -12,10 +12,10 @@
 - [ ] **P0** Harden outbound requests jika fitur pengambilan metadata/favicons eksternal diaktifkan kembali.
 
 ## P1 — Performance & Reliability
-- [ ] **P1** Enable SQLite WAL + `busy_timeout` setelah memastikan deployment memakai local storage.
+- [x] **P1** Enable SQLite WAL + `busy_timeout` setelah memastikan deployment memakai local storage.
 - [ ] **P1** Pindahkan schema checks/migrations dari request path ke migration/setup flow.
-- [ ] **P1** Bungkus import bookmark dalam satu transaction.
-- [ ] **P1** Harden session cookie configuration.
+- [x] **P1** Bungkus import bookmark dalam satu transaction.
+- [x] **P1** Harden session cookie configuration.
 - [ ] **P1** Tambahkan login throttling/backoff.
 - [ ] **P1** Perbaiki error handling backup/restore agar detail exception tidak bocor.
 - [ ] **P1** Tambahkan batas ukuran backup secara eksplisit.
