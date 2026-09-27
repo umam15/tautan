@@ -739,7 +739,7 @@ function validate_sqlite_schema(string $path): bool
  */
 function restore_db_from_upload(string $uploadedTmpPath): void
 {
-    if (!is_file($uploadedTmpPath) || filesize($uploadedTmpPath) > 64 * 1024 * 1024) {
+    if (!is_file($uploadedTmpPath) || filesize($uploadedTmpPath) > BACKUP_MAX_FILE_SIZE) {
         throw new RuntimeException('Ukuran backup melebihi batas 64 MB.');
     }
 
