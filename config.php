@@ -49,37 +49,9 @@ function db(): PDO
         $pdo->exec('PRAGMA foreign_keys = ON');
         $pdo->exec('PRAGMA busy_timeout = 5000');
         $pdo->exec('PRAGMA journal_mode = WAL');
-
-        // Schema/migration hanya dijalankan sekali per database version.
-        ensure_schema($pdo);
     }
 
     return $pdo;
-}
-
-function ensure_schema(PDO $pdo): void
-{
-    $pdo->exec("CREATE TABLE IF NOT EXISTS app_schema (version INTEGER NOT NULL)");
-    $row = $pdo->query('SELECT version FROM app_schema LIMIT 1')->fetchColumn();
-    $version = $row === false ? 0 : (int) $row;
-
-    if ($version >= 3) {
-        return;
-    }
-
-    $pdo->beginTransaction();
-    try {
-        init_schema($pdo);
-        $pdo->exec('DELETE FROM app_schema');
-        $stmt = $pdo->prepare('INSERT INTO app_schema (version) VALUES (:version)');
-        $stmt->execute([':version' => 3]);
-        $pdo->commit();
-    } catch (Throwable $e) {
-        if ($pdo->inTransaction()) {
-            $pdo->rollBack();
-        }
-        throw $e;
-    }
 }
 
 /**
