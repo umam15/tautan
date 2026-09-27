@@ -29,3 +29,6 @@ jobs:
 
       - name: Authorization regression test
         run: php tests/authorization.php
+
+      - name: Import/export regression test
+        run: php tests/import-export.php
