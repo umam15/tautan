@@ -4,9 +4,9 @@
 > Status: `[ ]` belum dikerjakan, `[x]` selesai, `[-]` ditunda sampai ada data/benchmark.
 
 ## P0 — Security & Correctness
-- [ ] **P0** Enforce link ownership pada edit/update.
-- [ ] **P0** Enforce link ownership pada delete.
-- [ ] **P0** Validate reorder IDs dan ownership.
+- [x] **P0** Enforce link ownership pada edit/update.
+- [x] **P0** Enforce link ownership pada delete.
+- [x] **P0** Validate reorder IDs dan ownership.
 - [x] **P0** Remove remote favicon service dependency; favicon aplikasi memakai fallback lokal.
 - [x] **P0** Remove frontend CDN dependency; aplikasi tidak bergantung pada CDN untuk berjalan.
 - [ ] **P0** Harden outbound requests jika fitur pengambilan metadata/favicons eksternal diaktifkan kembali.
