@@ -335,7 +335,8 @@ function parse_bookmark_html(string $html): array
         $href = trim($a->getAttribute('href'));
         // Lewati skema selain http(s) — javascript:, mailto:, place: (folder
         // spesial Firefox), dst — karena bukan link yang bisa disimpan.
-        if ($href === '' || !preg_match('#^https?://#i', $href)) {
+        $href = normalize_url($href);
+        if ($href === '') {
             continue;
         }
 
