@@ -16,16 +16,9 @@ jobs:
         uses: actions/checkout@v4
 
       - name: PHP syntax check
-        uses: php-actions/php-syntax-check@v1
-        with:
-          php_version: 8.2
-          files: |
-            config.php
-            includes
-            links
-            admin
-            scripts
-            tests
+        run: |
+          find config.php includes links admin scripts tests -type f -name '*.php' -print0 |
+            xargs -0 -n1 php -l
 
       - name: Authorization regression test
         run: php tests/authorization.php
