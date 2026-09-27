@@ -8,7 +8,6 @@
 - [ ] **P0** Audit lifecycle password/session: logout, session invalidation, dan perubahan password.
 
 ## P1 — Performance & Reliability
-- [ ] **P1** Tambahkan security headers (CSP, X-Content-Type-Options, Referrer-Policy, Permissions-Policy; HSTS hanya untuk deployment HTTPS).
 - [ ] **P1** Jadikan backup atomic: temporary file → flush/sync yang sesuai → rename.
 - [ ] **P1** Tambahkan `php scripts/check-db.php` untuk `PRAGMA integrity_check` dan validasi schema version.
 - [ ] **P1** Tambahkan offline smoke test dengan network diblokir; pengecualian hanya icon bookmark eksternal.
