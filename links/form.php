@@ -8,8 +8,8 @@ $link = null;
 
 if ($editing) {
     $link = get_link($id);
-    if (!$link) {
-        set_flash('error', 'Tautan tidak ditemukan.');
+    if (!$link || !can_manage_link($link)) {
+        set_flash('error', 'Tautan tidak ditemukan atau Anda tidak memiliki akses.');
         redirect('../index.php');
     }
 }
