@@ -89,9 +89,9 @@ require_once __DIR__ . '/../includes/header.php';
         </label>
 
         <label>
-            Ikon lokal (opsional)
-            <input type="text" name="icon" value="<?= e($values['icon']) ?>" placeholder="data:image/png;base64,...">
-            <small class="field-hint">Kosongkan untuk memakai ikon default lokal.</small>
+            URL Ikon (opsional)
+            <input type="text" name="icon" value="<?= e($values['icon']) ?>" placeholder="https://contoh.com/icon.png">
+            <small class="field-hint">Kosongkan agar ikon terisi otomatis.</small>
         </label>
 
         <label>
