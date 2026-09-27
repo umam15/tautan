@@ -18,7 +18,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'resto
     } else {
         $tmpPath = $_FILES['backup_file']['tmp_name'];
 
-        if (!is_sqlite_file($tmpPath)) {
+        if (filesize($tmpPath) > BACKUP_MAX_FILE_SIZE) {
+            $errors[] = 'Ukuran backup terlalu besar (maksimum 64 MB).';
+        } elseif (!is_sqlite_file($tmpPath)) {
             $errors[] = 'File yang diunggah bukan file database SQLite yang valid.';
         } elseif (!validate_sqlite_schema($tmpPath)) {
             $errors[] = 'Struktur tabel di file tersebut tidak sesuai dengan aplikasi ini (users/links tidak ditemukan).';
