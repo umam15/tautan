@@ -700,6 +700,10 @@ function stream_links_export(string $format, array $links): void
  */
 function is_sqlite_file(string $path): bool
 {
+    if (!is_file($path) || filesize($path) > 64 * 1024 * 1024) {
+        return false;
+    }
+
     $fh = @fopen($path, 'rb');
     if (!$fh) {
         return false;
@@ -733,9 +737,17 @@ function validate_sqlite_schema(string $path): bool
  */
 function restore_db_from_upload(string $uploadedTmpPath): void
 {
+    if (!is_file($uploadedTmpPath) || filesize($uploadedTmpPath) > 64 * 1024 * 1024) {
+        throw new RuntimeException('Ukuran backup melebihi batas 64 MB.');
+    }
+
+    if (!is_sqlite_file($uploadedTmpPath) || !validate_sqlite_schema($uploadedTmpPath)) {
+        throw new RuntimeException('File backup tidak valid.');
+    }
+
     $backupDir = DB_DIR . '/backups';
-    if (!is_dir($backupDir)) {
-        mkdir($backupDir, 0775, true);
+    if (!is_dir($backupDir) && !mkdir($backupDir, 0775, true) && !is_dir($backupDir)) {
+        throw new RuntimeException('Direktori backup tidak dapat dibuat.');
     }
 
     // Simpan salinan pengaman dari database yang sedang aktif sebelum ditimpa
