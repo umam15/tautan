@@ -67,6 +67,16 @@ function get_links(string $query = '', string $tag = ''): array
     return $stmt->fetchAll();
 }
 
+function can_manage_link(array $link): bool
+{
+    $user = current_user();
+    if (!$user) {
+        return false;
+    }
+    // Admin tetap dapat gerakkan/mengelola semua link; user biasa hanya link miliknya.
+    return is_admin() || ((int) ($link['user_id'] ?? 0) === (int) $user['id']);
+}
+
 function get_link(int $id): ?array
 {
     $stmt = db()->prepare('SELECT * FROM links WHERE id = :id');
