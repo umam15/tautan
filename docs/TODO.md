@@ -15,7 +15,6 @@
 - [ ] **P1** Tambahkan `php scripts/check-db.php` untuk `PRAGMA integrity_check` dan validasi schema version.
 - [ ] **P1** Tambahkan offline smoke test dengan network diblokir; pengecualian hanya icon bookmark eksternal.
 
-## P1 — Performance & Reliability
 - [x] **P1** Enable SQLite WAL + `busy_timeout` setelah memastikan deployment memakai local storage.
 - [x] **P1** Pindahkan schema checks/migrations sepenuhnya dari request path ke migration/setup flow. Migration dijalankan eksplisit dengan `php scripts/migrate.php` saat deployment/setup.
 - [x] **P1** Bungkus import bookmark dalam satu transaction.
