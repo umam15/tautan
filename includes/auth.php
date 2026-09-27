@@ -65,15 +65,52 @@ function require_admin(): void
 
 function attempt_login(string $username, string $password): bool
 {
+    // Rate limit berbasis session: murah, tidak butuh tabel/dependency baru.
+    // 5 kegagalan dalam 60 detik mengunci percobaan selama 60 detik.
+    $now = time();
+    $window = 60;
+    $maxFailures = 5;
+    $lockout = 60;
+
+    $state = $_SESSION['login_rate_limit'] ?? ['failures' => [], 'locked_until' => 0];
+    $failures = array_values(array_filter(
+        $state['failures'] ?? [],
+        static fn ($timestamp) => is_int($timestamp) && $timestamp > $now - $window
+    ));
+
+    if (($state['locked_until'] ?? 0) > $now) {
+        return false;
+    }
+
     $stmt = db()->prepare('SELECT * FROM users WHERE username = :u');
     $stmt->execute([':u' => $username]);
     $user = $stmt->fetch();
 
     if ($user && password_verify($password, $user['password_hash'])) {
+        unset($_SESSION['login_rate_limit']);
         session_regenerate_id(true);
         $_SESSION['user_id'] = $user['id'];
         return true;
     }
+
+    $failures[] = $now;
+    if (count($failures) >= $maxFailures) {
+        $_SESSION['login_rate_limit'] = [
+            'failures' => [],
+            'locked_until' => $now + $lockout,
+        ];
+    } else {
+        $_SESSION['login_rate_limit'] = [
+            'failures' => $failures,
+            'locked_until' => 0,
+        ];
+    }
+
+    // Dummy hash menjaga timing lookup user yang tidak ada tetap lebih konsisten.
+    if (!$user) {
+        password_verify($password, '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC2q5jQ2fQfQq8JjQm2');
+    }
+
     return false;
 }
 
