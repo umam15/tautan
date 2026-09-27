@@ -24,7 +24,7 @@
 - [x] **P2** Centralize validation dan resource limits.
 - [x] **P2** Tambahkan automated PHP syntax/static checks di CI.
 - [x] **P2** Tambahkan regression tests authorization dan import/export.
-- [ ] **P2** Split `includes/functions.php` berdasarkan domain.
+- [-] **P2** Split `includes/functions.php` berdasarkan domain — ditahan: fungsi global masih menjadi API internal lintas halaman; perlu test coverage lebih luas sebelum refactor struktural.
 - [-] **P2** Normalize tags — hanya jika dataset/search menjadi bottleneck terukur.
 - [-] **P2** SQLite FTS5 — hanya jika search menjadi bottleneck terukur.
 - [-] **P2** Tambah index baru — hanya berdasarkan query profiling.
