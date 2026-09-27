@@ -9,7 +9,8 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 verify_csrf();
 
 $id = (int) ($_POST['id'] ?? 0);
-if ($id > 0 && get_link($id)) {
+$link = $id > 0 ? get_link($id) : null;
+if ($link && can_manage_link($link)) {
     delete_link($id);
     set_flash('success', 'Tautan berhasil dihapus.');
 } else {
