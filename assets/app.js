@@ -101,31 +101,61 @@ function initDropdowns() {
 
 function initReorder() {
     var grid = document.getElementById('links-grid');
-    if (!grid || grid.dataset.canEdit !== '1' || typeof Sortable === 'undefined') {
+    if (!grid || grid.dataset.canEdit !== '1') {
         return;
     }
 
     var reorderUrl = grid.dataset.reorderUrl;
     var csrfInput = document.querySelector('input[name="csrf_token"]');
     var csrfToken = csrfInput ? csrfInput.value : '';
+    var dragged = null;
 
-    Sortable.create(grid, {
-        handle: '.drag-handle',
-        animation: 150,
-        ghostClass: 'sortable-ghost',
-        onEnd: function () {
-            var order = Array.prototype.map.call(
-                grid.querySelectorAll('.link-card'),
-                function (el) { return el.dataset.id; }
-            );
+    grid.querySelectorAll('.link-card').forEach(function (card) {
+        card.draggable = true;
 
-            fetch(reorderUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ order: order, csrf_token: csrfToken })
-            }).catch(function (err) {
-                console.error('Gagal menyimpan urutan link:', err);
-            });
-        }
+        card.addEventListener('dragstart', function (e) {
+            dragged = card;
+            card.classList.add('sortable-ghost');
+            if (e.dataTransfer) {
+                e.dataTransfer.effectAllowed = 'move';
+                e.dataTransfer.setData('text/plain', card.dataset.id || '');
+            }
+        });
+
+        card.addEventListener('dragend', function () {
+            card.classList.remove('sortable-ghost');
+            dragged = null;
+            saveOrder();
+        });
+
+        card.addEventListener('dragover', function (e) {
+            if (!dragged || dragged === card) return;
+            e.preventDefault();
+            var rect = card.getBoundingClientRect();
+            var before = e.clientY < rect.top + rect.height / 2;
+            if (before) {
+                grid.insertBefore(dragged, card);
+            } else {
+                grid.insertBefore(dragged, card.nextSibling);
+            }
+        });
     });
+
+    function saveOrder() {
+        var order = Array.prototype.map.call(
+            grid.querySelectorAll('.link-card'),
+            function (el) { return el.dataset.id; }
+        );
+
+        fetch(reorderUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({ order: order, csrf_token: csrfToken })
+        }).catch(function (err) {
+            console.error('Gagal menyimpan urutan link:', err);
+        });
+    }
 }
