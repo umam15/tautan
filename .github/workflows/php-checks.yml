@@ -1,0 +1,27 @@
+name: PHP Checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  syntax:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: PHP syntax check
+        uses: php-actions/php-syntax-check@v1
+        with:
+          php_version: 8.2
+          files: |
+            config.php
+            includes
+            links
+            admin
+            scripts
