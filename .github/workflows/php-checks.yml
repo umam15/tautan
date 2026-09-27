@@ -38,3 +38,6 @@ jobs:
           mkdir -p data
           php scripts/migrate.php
           php scripts/check-db.php
+
+      - name: Offline-first dependency check
+        run: php scripts/check-offline.php
