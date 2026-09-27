@@ -21,7 +21,7 @@
 - [x] **P1** Tambahkan batas ukuran backup secara eksplisit.
 
 ## P2 — Maintainability & Scale
-- [ ] **P2** Centralize validation dan resource limits.
+- [x] **P2** Centralize validation dan resource limits.
 - [x] **P2** Tambahkan automated PHP syntax/static checks di CI.
 - [x] **P2** Tambahkan regression tests authorization dan import/export.
 - [ ] **P2** Split `includes/functions.php` berdasarkan domain.
