@@ -117,8 +117,8 @@ require_once __DIR__ . '/includes/header.php';
                 <div class="link-body">
                     <a class="link-open" href="<?= e($clickTrackingOn ? 'go.php?id=' . (int) $link['id'] : $link['url']) ?>" target="_blank" rel="noopener noreferrer">
                         <span class="link-icon">
-                            <?php if (str_starts_with(strtolower((string) ($link['icon'] ?? '')), 'data:image/')): ?>
-                                <img src="<?= e($link['icon']) ?>" alt="" loading="lazy">
+                            <?php if (!empty($link['icon'])): ?>
+                                <img src="<?= e($link['icon']) ?>" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'">
                             <?php else: ?>
                                 <img src="<?= e(favicon_for($link['url'])) ?>" alt="" loading="lazy" onerror="this.style.display='none'">
                             <?php endif; ?>
