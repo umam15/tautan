@@ -9,7 +9,6 @@
 
 ## P1 — Performance & Reliability
 - [ ] **P1** Jadikan backup atomic: temporary file → flush/sync yang sesuai → rename.
-- [ ] **P1** Tambahkan `php scripts/check-db.php` untuk `PRAGMA integrity_check` dan validasi schema version.
 - [ ] **P1** Tambahkan offline smoke test dengan network diblokir; pengecualian hanya icon bookmark eksternal.
 
 ## P2 — Maintainability & Scale
