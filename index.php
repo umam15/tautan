@@ -165,7 +165,6 @@ require_once __DIR__ . '/includes/header.php';
 <?php endif; ?>
 
 <?php if ($loggedIn): ?>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.2/Sortable.min.js"></script>
 <?php endif; ?>
 <script src="assets/app.js"></script>
 
