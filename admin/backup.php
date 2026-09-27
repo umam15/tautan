@@ -28,7 +28,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'resto
                 set_flash('success', 'Database berhasil dipulihkan dari file backup. Jika Anda logout otomatis, silakan login kembali.');
                 redirect('backup.php');
             } catch (Throwable $e) {
-                $errors[] = 'Gagal memulihkan database: ' . $e->getMessage();
+                error_log('Database restore failed: ' . $e->getMessage());
+                $errors[] = 'Gagal memulihkan database. Pastikan file backup valid dan tidak melebihi batas ukuran.';
             }
         }
     }
